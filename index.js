@@ -18,6 +18,25 @@ function isPercentageLike(integer) {
   return integer === '0' || integer === '-0'
 }
 
+function isUserLike(key) {
+  const userKeys = [
+    'first_name',
+    'last_name',
+    'email',
+    'mail',
+    'username',
+    'lastName',
+    'lastName',
+    'displayName',
+    'givenName',
+    'surname',
+    'userPrincipalName',
+    'pic',
+  ]
+
+  return !!userKeys.find((k) => key?.toLowerCase()?.includes(k.toLowerCase()))
+}
+
 function getAllMocks(dirPath, arrayOfFiles) {
   const files = fs.readdirSync(dirPath)
 
@@ -46,6 +65,14 @@ function updateMock(mockPath) {
 
   const mapper = (key, value) => {
     if (skipKeys.includes(key) || skipValues.includes(value)) return [key, value]
+
+    if (isUserLike(key)) {
+      if (typeof value === 'string' && value.includes('@')) {
+        return [key, faker.internet.email()]
+      }
+
+      return [key, faker.name.fullName()]
+    }
 
     if (typeof value === 'number') {
       const valueString = String(value)
